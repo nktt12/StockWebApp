@@ -14,7 +14,7 @@ from sklearn.metrics import root_mean_squared_error
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #Loading the stock data
-ticker = 'ULVR'
+ticker = 'AAPL'  # Example ticker symbol for Apple Inc.
 df = yf.download(ticker, '2020-01-01')
 
 #Preprcoessing the data to be in a normal distribution and we are only using the close price
@@ -66,3 +66,14 @@ for i in range(num_epochs):
     optimizer.zero_grad()
     loss.backward() 
     optimizer.step()
+
+#Testing the model
+model.eval()
+y_test_pred = model(X_test)
+y_train_pred = scaler.inverse_transform(y_training_pred.cpu().detach().numpy())
+y_train = scaler.inverse_transform(y_train.cpu().detach().numpy())
+y_test_pred = scaler.inverse_transform(y_test_pred.cpu().detach().numpy())
+y_test = scaler.inverse_transform(y_test.cpu().detach().numpy())
+
+train_rmse = root_mean_squared_error(y_train[:,0], y_train_pred[:,0])
+test_rmse = root_mean_squared_error(y_test[:,0], y_test_pred[:,0])
